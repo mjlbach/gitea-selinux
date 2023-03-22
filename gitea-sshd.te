@@ -5,4 +5,4 @@ type sshd_t;
 type  container_runtime_exec_t;
 ')
 
-allow sshd_t container_runtime_exec_t:file { execute execute_no_trans open read map };
+allow sshd_t container_runtime_exec_t:file { execute execute_no_trans open read map write };

@@ -1,0 +1,82 @@
+
+module gitea-sshd 1.0;
+
+require {
+	type session_dbusd_tmp_t;
+	type container_runtime_exec_t;
+	type sshd_t;
+	type sysctl_t;
+	type conmon_exec_t;
+	type container_ro_file_t;
+	type container_runtime_tmpfs_t;
+	type nsfs_t;
+	type unconfined_dbusd_t;
+	type syslogd_var_run_t;
+	type container_runtime_t;
+	type container_file_t;
+	type data_home_t;
+	class file { create execute execute_no_trans getattr lock map open read write };
+	class dir { add_name create ioctl mounton read write };
+	class sock_file { getattr write };
+	class process { setpgid signull };
+	class cap_userns { dac_override dac_read_search setgid setuid sys_admin sys_chroot sys_ptrace };
+	class unix_dgram_socket sendto;
+	class unix_stream_socket connectto;
+}
+
+#============= sshd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t conmon_exec_t:file { execute execute_no_trans open read };
+
+#!!!! This avc can be allowed using the boolean 'domain_can_mmap_files'
+allow sshd_t conmon_exec_t:file map;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_file_t:file { open read };
+
+#!!!! This avc is allowed in the current policy
+#!!!! This av rule may have been overridden by an extended permission av rule
+allow sshd_t container_ro_file_t:dir { add_name ioctl mounton read write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_ro_file_t:file { create getattr lock open read write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_runtime_exec_t:file { execute execute_no_trans map open read };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_runtime_t:process signull;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_runtime_tmpfs_t:file { map open read write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t data_home_t:dir { add_name create write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t data_home_t:file { create map write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t nsfs_t:file { open read };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:cap_userns { dac_override dac_read_search setgid setuid sys_admin sys_chroot sys_ptrace };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:process setpgid;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:unix_dgram_socket sendto;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t session_dbusd_tmp_t:sock_file { getattr write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t sysctl_t:file read;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t syslogd_var_run_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t unconfined_dbusd_t:unix_stream_socket connectto;
