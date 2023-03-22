@@ -2,18 +2,19 @@
 module gitea-sshd 1.0;
 
 require {
-	type sshd_t;
-	type container_file_t;
-	type conmon_exec_t;
-	type sysctl_t;
 	type container_runtime_t;
 	type container_ro_file_t;
-	type syslogd_var_run_t;
+	type session_dbusd_tmp_t;
+	type container_file_t;
 	type unconfined_dbusd_t;
 	type spc_t;
-	type container_runtime_exec_t;
+	type conmon_exec_t;
+	type sysctl_t;
+	type fs_t;
+	type sshd_t;
 	type container_runtime_tmpfs_t;
-	type session_dbusd_tmp_t;
+	type container_runtime_exec_t;
+	type syslogd_var_run_t;
 	type data_home_t;
 	type nsfs_t;
 	class file { append create execute execute_no_trans getattr lock map open read unlink write };
@@ -24,6 +25,7 @@ require {
 	class cap_userns { dac_override dac_read_search setgid setuid sys_admin sys_chroot sys_ptrace };
 	class unix_dgram_socket sendto;
 	class unix_stream_socket connectto;
+	class filesystem unmount;
 }
 
 #============= sshd_t ==============
@@ -61,6 +63,9 @@ allow sshd_t data_home_t:file { append create map unlink write };
 
 #!!!! This avc is allowed in the current policy
 allow sshd_t data_home_t:sock_file { create getattr setattr unlink write };
+
+#!!!! This avc can be allowed using the boolean 'polyinstantiation_enabled'
+allow sshd_t fs_t:filesystem unmount;
 
 #!!!! This avc is allowed in the current policy
 allow sshd_t nsfs_t:file { open read };
