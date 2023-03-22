@@ -1,0 +1,120 @@
+
+module gitea-sshd 1.0;
+
+require {
+	type unconfined_dbusd_t;
+	type sysctl_t;
+	type syslogd_var_run_t;
+	type fs_t;
+	type spc_t;
+	type init_t;
+	type container_file_t;
+	type ntop_port_t;
+	type syslogd_t;
+	type unconfined_service_t;
+	type conmon_exec_t;
+	type nsfs_t;
+	type session_dbusd_tmp_t;
+	type data_home_t;
+	type sshd_t;
+	type container_runtime_exec_t;
+	type container_runtime_tmpfs_t;
+	type container_ro_file_t;
+	type container_runtime_t;
+	class file { append create execute execute_no_trans getattr lock map open read rename unlink write };
+	class dir { add_name create ioctl mounton read remove_name rmdir watch write };
+	class sock_file { create getattr setattr unlink write };
+	class fifo_file { create getattr open read unlink write };
+	class process { setcap setpgid siginh signull };
+	class cap_userns { dac_override dac_read_search setgid setuid sys_admin sys_chroot sys_ptrace };
+	class unix_dgram_socket sendto;
+	class unix_stream_socket connectto;
+	class lnk_file read;
+	class filesystem unmount;
+	class tcp_socket name_connect;
+}
+
+#============= init_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow init_t unconfined_service_t:process siginh;
+
+#============= sshd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t conmon_exec_t:file { execute execute_no_trans map open read };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_file_t:file { execute execute_no_trans map open read };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_file_t:lnk_file read;
+
+#!!!! This avc is allowed in the current policy
+#!!!! This av rule may have been overridden by an extended permission av rule
+allow sshd_t container_ro_file_t:dir { add_name ioctl mounton read write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_ro_file_t:file { create getattr lock open read write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_runtime_exec_t:file { execute execute_no_trans map open read };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_runtime_t:process signull;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t container_runtime_tmpfs_t:file { map open read write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t data_home_t:dir { add_name create remove_name rmdir watch write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t data_home_t:fifo_file { create getattr open read unlink write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t data_home_t:file { append create map rename unlink write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t data_home_t:sock_file { create getattr setattr unlink write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t fs_t:filesystem unmount;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t nsfs_t:file { open read };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t ntop_port_t:tcp_socket name_connect;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:cap_userns { dac_override dac_read_search setgid setuid sys_admin sys_chroot sys_ptrace };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:process { setcap setpgid };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:unix_dgram_socket sendto;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t self:unix_stream_socket connectto;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t session_dbusd_tmp_t:sock_file { getattr write };
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t spc_t:process signull;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t sysctl_t:file read;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t syslogd_var_run_t:dir read;
+
+#!!!! This avc is allowed in the current policy
+allow sshd_t unconfined_dbusd_t:unix_stream_socket connectto;
+
+#============= syslogd_t ==============
+
+#!!!! This avc is allowed in the current policy
+allow syslogd_t self:cap_userns sys_ptrace;
